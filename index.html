@@ -2,113 +2,255 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Rocket Engine Performance</title>
+  <title>Missile Performance Toolkit</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="wrapper">
     <div class="card">
-      <h1>Engine Performance</h1>
+      <h1>Missile Performance Toolkit</h1>
       <div class="subtitle">
-        Ideal rocket nozzle calculator (γ, R<sub>exhaust</sub>, T<sub>c</sub>, p<sub>c</sub>, p<sub>e</sub>, A<sub>e</sub>/A<sub>t</sub>).
+        Engine, injector and nozzle performance using ideal rocket relations.
       </div>
 
+      <!-- ENGINE PERFORMANCE -->
+      <h2 class="section-title">Engine performance</h2>
       <div class="grid">
         <div class="field">
           <label for="gamma">Gamma (γ)</label>
-          <input id="gamma" type="number" step="0.0001" placeholder="1.22" />
+          <input id="gamma" type="number" step="0.0001" placeholder="e.g. 1.22" />
           <span class="hint">Ratio of specific heats</span>
         </div>
-
         <div class="field">
           <label for="Rexhaust">R<sub>exhaust</sub> (J/kg·K)</label>
-          <input id="Rexhaust" type="number" step="0.1" placeholder="355" />
+          <input id="Rexhaust" type="number" step="0.1" placeholder="e.g. 285.6" />
           <span class="hint">Gas constant of exhaust</span>
         </div>
-
         <div class="field">
           <label for="Tc">T<sub>c</sub> (K)</label>
-          <input id="Tc" type="number" step="0.1" placeholder="3500" />
+          <input id="Tc" type="number" step="0.1" placeholder="e.g. 3000" />
           <span class="hint">Chamber temperature</span>
         </div>
-
         <div class="field">
           <label for="pc">p<sub>c</sub> (Pa)</label>
-          <input id="pc" type="number" step="1" placeholder="5e6" />
+          <input id="pc" type="number" step="1" placeholder="e.g. 4000000" />
           <span class="hint">Chamber pressure</span>
         </div>
-
         <div class="field">
           <label for="pe">p<sub>e</sub> (Pa)</label>
-          <input id="pe" type="number" step="1" placeholder="1e5" />
+          <input id="pe" type="number" step="1" placeholder="e.g. 101325" />
           <span class="hint">Exit pressure</span>
         </div>
-
         <div class="field">
           <label for="AeAt">A<sub>e</sub>/A<sub>t</sub></label>
-          <input id="AeAt" type="number" step="0.001" placeholder="20" />
-          <span class="hint">Nozzle expansion ratio</span>
+          <input id="AeAt" type="number" step="0.001" placeholder="e.g. 10" />
+          <span class="hint">Expansion ratio (for geom)</span>
         </div>
-
         <div class="field">
           <label for="mdot">ṁ (kg/s)</label>
-          <input id="mdot" type="number" step="0.0001" placeholder="optional" />
-          <span class="hint">Mass flow (for thrust)</span>
+          <input id="mdot" type="number" step="0.0001" placeholder="e.g. 5" />
+          <span class="hint">Total mass flow (for thrust)</span>
         </div>
-
         <div class="field">
           <label for="Ae">A<sub>e</sub> (m²)</label>
-          <input id="Ae" type="number" step="0.000001" placeholder="optional" />
+          <input id="Ae" type="number" step="0.000001" placeholder="e.g. 0.0403" />
           <span class="hint">Exit area (for thrust)</span>
         </div>
-
         <div class="field">
           <label for="pa">p<sub>a</sub> (Pa)</label>
-          <input id="pa" type="number" step="1" placeholder="101325" />
-          <span class="hint">Ambient pressure (for thrust)</span>
+          <input id="pa" type="number" step="1" placeholder="e.g. 101325" />
+          <span class="hint">Ambient pressure</span>
+        </div>
+        <div class="field">
+          <label for="m0">m<sub>0</sub> (kg)</label>
+          <input id="m0" type="number" step="0.01" placeholder="e.g. 200" />
+          <span class="hint">Initial mass (wet)</span>
+        </div>
+        <div class="field">
+          <label for="mf">m<sub>f</sub> (kg)</label>
+          <input id="mf" type="number" step="0.01" placeholder="e.g. 100" />
+          <span class="hint">Final mass (dry)</span>
+        </div>
+        <div class="field">
+          <label for="tb">t<sub>b</sub> (s)</label>
+          <input id="tb" type="number" step="0.01" placeholder="e.g. 20" />
+          <span class="hint">Burn time (info)</span>
         </div>
       </div>
 
       <div class="row">
-        <button class="btn btn-primary" id="computeBtn">Compute</button>
-        <button class="btn btn-secondary" id="resetBtn" type="button">Reset</button>
-        <span class="hint">Ideal, steady, 1‑D isentropic relations.</span>
+        <button class="btn btn-primary" id="engineComputeBtn">Compute engine</button>
+        <button class="btn btn-secondary" id="engineResetBtn" type="button">Reset engine</button>
+        <span class="hint">Computes V<sub>e</sub>, I<sub>sp</sub>, C<sub>F</sub>, F, Δv, T/W.</span>
       </div>
-
-      <div class="error" id="error"></div>
 
       <div class="results">
         <div class="result-card">
           <div class="result-label">Exhaust velocity V<sub>e</sub></div>
-          <div>
-            <span class="result-value" id="VeDisplay">–</span>
-            <span class="result-unit">m/s</span>
-          </div>
+          <div><span class="result-value" id="VeDisplay">–</span><span class="result-unit">m/s</span></div>
         </div>
-
         <div class="result-card">
           <div class="result-label">Specific impulse I<sub>sp</sub></div>
-          <div>
-            <span class="result-value" id="IspDisplay">–</span>
-            <span class="result-unit">s</span>
-          </div>
+          <div><span class="result-value" id="IspDisplay">–</span><span class="result-unit">s</span></div>
         </div>
-
         <div class="result-card">
           <div class="result-label">Thrust coefficient C<sub>F</sub></div>
-          <div>
-            <span class="result-value" id="CFDisplay">–</span>
-          </div>
+          <div><span class="result-value" id="CFDisplay">–</span></div>
         </div>
-
         <div class="result-card">
           <div class="result-label">Thrust F</div>
-          <div>
-            <span class="result-value" id="FDisplay">–</span>
-            <span class="result-unit">N</span>
-          </div>
+          <div><span class="result-value" id="FDisplay">–</span><span class="result-unit">N</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Δv</div>
+          <div><span class="result-value" id="dVDisplay">–</span><span class="result-unit">m/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">T/W at liftoff</div>
+          <div><span class="result-value" id="twDisplay">–</span></div>
         </div>
       </div>
+
+      <div class="error" id="engineError"></div>
+
+      <!-- INJECTOR -->
+      <h2 class="section-title">Injector</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="injC">C (empirical)</label>
+          <input id="injC" type="number" step="0.0001" placeholder="e.g. 0.5" />
+          <span class="hint">Spray correlation constant</span>
+        </div>
+        <div class="field">
+          <label for="injMu">μ (Pa·s)</label>
+          <input id="injMu" type="number" step="0.000001" placeholder="e.g. 0.0015" />
+          <span class="hint">Dynamic viscosity</span>
+        </div>
+        <div class="field">
+          <label for="injSigma">σ (N/m)</label>
+          <input id="injSigma" type="number" step="0.000001" placeholder="e.g. 0.02" />
+          <span class="hint">Surface tension</span>
+        </div>
+        <div class="field">
+          <label for="injDp">Δp (Pa)</label>
+          <input id="injDp" type="number" step="1" placeholder="e.g. 500000" />
+          <span class="hint">Injector pressure drop</span>
+        </div>
+        <div class="field">
+          <label for="injMdot">ṁ<sub>inj</sub> (kg/s)</label>
+          <input id="injMdot" type="number" step="0.0001" placeholder="e.g. 4.3" />
+          <span class="hint">Injected mass flow (e.g. oxidizer)</span>
+        </div>
+        <div class="field">
+          <label for="injRho">ρ (kg/m³)</label>
+          <input id="injRho" type="number" step="0.1" placeholder="e.g. 1140" />
+          <span class="hint">Injected fluid density</span>
+        </div>
+        <div class="field">
+          <label for="injU">u<sub>inj</sub> (m/s)</label>
+          <input id="injU" type="number" step="0.1" placeholder="e.g. 20" />
+          <span class="hint">Injection velocity</span>
+        </div>
+        <div class="field">
+          <label for="injHoles">N<sub>holes</sub></label>
+          <input id="injHoles" type="number" step="1" placeholder="e.g. 16" />
+          <span class="hint">Number of orifices</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="injComputeBtn">Compute injector</button>
+        <button class="btn btn-secondary" id="injResetBtn" type="button">Reset injector</button>
+        <span class="hint">Computes D<sub>32</sub>, A<sub>inj</sub>, d<sub>hole</sub>.</span>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Sauter mean diameter D<sub>32</sub></div>
+          <div><span class="result-value" id="D32Display">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Injection area A<sub>inj</sub></div>
+          <div><span class="result-value" id="AinjDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Orifice diameter d<sub>hole</sub></div>
+          <div><span class="result-value" id="DholeDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+      </div>
+
+      <div class="error" id="injError"></div>
+
+      <!-- NOZZLE -->
+      <h2 class="section-title">Nozzle</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="nozGamma">Gamma (γ)</label>
+          <input id="nozGamma" type="number" step="0.0001" placeholder="e.g. 1.22" />
+          <span class="hint">Often same as engine γ</span>
+        </div>
+        <div class="field">
+          <label for="nozR">R<sub>exhaust</sub> (J/kg·K)</label>
+          <input id="nozR" type="number" step="0.1" placeholder="e.g. 285.6" />
+          <span class="hint">Often same as engine R</span>
+        </div>
+        <div class="field">
+          <label for="nozTc">T<sub>c</sub> (K)</label>
+          <input id="nozTc" type="number" step="0.1" placeholder="e.g. 3000" />
+          <span class="hint">Chamber temperature</span>
+        </div>
+        <div class="field">
+          <label for="nozPc">p<sub>c</sub> (Pa)</label>
+          <input id="nozPc" type="number" step="1" placeholder="e.g. 4000000" />
+          <span class="hint">Chamber pressure</span>
+        </div>
+        <div class="field">
+          <label for="nozMdot">ṁ (kg/s)</label>
+          <input id="nozMdot" type="number" step="0.0001" placeholder="e.g. 5" />
+          <span class="hint">Mass flow through nozzle</span>
+        </div>
+        <div class="field">
+          <label for="nozAeAt">A<sub>e</sub>/A<sub>t</sub></label>
+          <input id="nozAeAt" type="number" step="0.001" placeholder="e.g. 10" />
+          <span class="hint">Expansion ratio</span>
+        </div>
+        <div class="field">
+          <label for="nozThetaDiv">θ<sub>div</sub> (deg)</label>
+          <input id="nozThetaDiv" type="number" step="0.1" placeholder="e.g. 15" />
+          <span class="hint">Divergence half angle</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="nozComputeBtn">Compute nozzle</button>
+        <button class="btn btn-secondary" id="nozResetBtn" type="button">Reset nozzle</button>
+        <span class="hint">Computes A<sub>t</sub>, A<sub>e</sub>, D<sub>t</sub>, D<sub>e</sub>, L<sub>div</sub>.</span>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Throat area A<sub>t</sub></div>
+          <div><span class="result-value" id="AtDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Exit area A<sub>e</sub></div>
+          <div><span class="result-value" id="AeNozDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Throat diameter D<sub>t</sub></div>
+          <div><span class="result-value" id="DtDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Exit diameter D<sub>e</sub></div>
+          <div><span class="result-value" id="DeDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Divergent length L<sub>div</sub></div>
+          <div><span class="result-value" id="LdivDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+      </div>
+
+      <div class="error" id="nozError"></div>
     </div>
   </div>
 
