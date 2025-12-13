@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rocket Engine Performance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <h1>Engine Performance</h1>
+      <div class="subtitle">
+        Ideal rocket nozzle calculator (γ, R<sub>exhaust</sub>, T<sub>c</sub>, p<sub>c</sub>, p<sub>e</sub>, A<sub>e</sub>/A<sub>t</sub>).
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="gamma">Gamma (γ)</label>
+          <input id="gamma" type="number" step="0.0001" placeholder="1.22" />
+          <span class="hint">Ratio of specific heats</span>
+        </div>
+
+        <div class="field">
+          <label for="Rexhaust">R<sub>exhaust</sub> (J/kg·K)</label>
+          <input id="Rexhaust" type="number" step="0.1" placeholder="355" />
+          <span class="hint">Gas constant of exhaust</span>
+        </div>
+
+        <div class="field">
+          <label for="Tc">T<sub>c</sub> (K)</label>
+          <input id="Tc" type="number" step="0.1" placeholder="3500" />
+          <span class="hint">Chamber temperature</span>
+        </div>
+
+        <div class="field">
+          <label for="pc">p<sub>c</sub> (Pa)</label>
+          <input id="pc" type="number" step="1" placeholder="5e6" />
+          <span class="hint">Chamber pressure</span>
+        </div>
+
+        <div class="field">
+          <label for="pe">p<sub>e</sub> (Pa)</label>
+          <input id="pe" type="number" step="1" placeholder="1e5" />
+          <span class="hint">Exit pressure</span>
+        </div>
+
+        <div class="field">
+          <label for="AeAt">A<sub>e</sub>/A<sub>t</sub></label>
+          <input id="AeAt" type="number" step="0.001" placeholder="20" />
+          <span class="hint">Nozzle expansion ratio</span>
+        </div>
+
+        <div class="field">
+          <label for="mdot">ṁ (kg/s)</label>
+          <input id="mdot" type="number" step="0.0001" placeholder="optional" />
+          <span class="hint">Mass flow (for thrust)</span>
+        </div>
+
+        <div class="field">
+          <label for="Ae">A<sub>e</sub> (m²)</label>
+          <input id="Ae" type="number" step="0.000001" placeholder="optional" />
+          <span class="hint">Exit area (for thrust)</span>
+        </div>
+
+        <div class="field">
+          <label for="pa">p<sub>a</sub> (Pa)</label>
+          <input id="pa" type="number" step="1" placeholder="101325" />
+          <span class="hint">Ambient pressure (for thrust)</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="computeBtn">Compute</button>
+        <button class="btn btn-secondary" id="resetBtn" type="button">Reset</button>
+        <span class="hint">Ideal, steady, 1‑D isentropic relations.</span>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Exhaust velocity V<sub>e</sub></div>
+          <div>
+            <span class="result-value" id="VeDisplay">–</span>
+            <span class="result-unit">m/s</span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-label">Specific impulse I<sub>sp</sub></div>
+          <div>
+            <span class="result-value" id="IspDisplay">–</span>
+            <span class="result-unit">s</span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-label">Thrust coefficient C<sub>F</sub></div>
+          <div>
+            <span class="result-value" id="CFDisplay">–</span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-label">Thrust F</div>
+          <div>
+            <span class="result-value" id="FDisplay">–</span>
+            <span class="result-unit">N</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="engine.js"></script>
+</body>
+</html>
