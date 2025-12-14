@@ -12,30 +12,54 @@
       <div class="subtitle">
         Engine, injector and nozzle performance using ideal rocket relations.
       </div>
+        <div class="row" style="margin-bottom: 10px;">
+  <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
+    <input type="checkbox" id="rangeModeToggle" />
+    Use range sliders instead of text boxes
+  </label>
+  <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
+    <input type="checkbox" id="enableEditToggle" checked />
+    Enable input editing
+  </label>
+  <button class="btn btn-secondary" id="resetAllBtn" type="button">
+    Reset all
+  </button>
+</div>
+
+      <!-- COMMON PARAMETERS -->
+      <h2 class="section-title">Common parameters</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="commonGamma">Gamma (γ)</label>
+          <input id="commonGamma" type="number" step="0.0001" placeholder="e.g. 1.22" />
+          <span class="hint">Ratio of specific heats (used by engine & nozzle)</span>
+        </div>
+        <div class="field">
+          <label for="commonR">R<sub>exhaust</sub> (J/kg·K)</label>
+          <input id="commonR" type="number" step="0.1" placeholder="e.g. 285.6" />
+          <span class="hint">Gas constant of exhaust (used by engine & nozzle)</span>
+        </div>
+        <div class="field">
+          <label for="commonTc">T<sub>c</sub> (K)</label>
+          <input id="commonTc" type="number" step="0.1" placeholder="e.g. 3000" />
+          <span class="hint">Chamber temperature (used by engine & nozzle)</span>
+        </div>
+        <div class="field">
+          <label for="commonPc">p<sub>c</sub> (Pa)</label>
+          <input id="commonPc" type="number" step="1" placeholder="e.g. 4000000" />
+          <span class="hint">Chamber pressure (used by engine & nozzle)</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-secondary" id="commonResetBtn" type="button">Reset common</button>
+        <span class="hint">Clears shared γ, R, T<sub>c</sub>, p<sub>c</sub>.</span>
+      </div>
 
       <!-- ENGINE PERFORMANCE -->
       <h2 class="section-title">Engine performance</h2>
       <div class="grid">
-        <div class="field">
-          <label for="gamma">Gamma (γ)</label>
-          <input id="gamma" type="number" step="0.0001" placeholder="e.g. 1.22" />
-          <span class="hint">Ratio of specific heats</span>
-        </div>
-        <div class="field">
-          <label for="Rexhaust">R<sub>exhaust</sub> (J/kg·K)</label>
-          <input id="Rexhaust" type="number" step="0.1" placeholder="e.g. 285.6" />
-          <span class="hint">Gas constant of exhaust</span>
-        </div>
-        <div class="field">
-          <label for="Tc">T<sub>c</sub> (K)</label>
-          <input id="Tc" type="number" step="0.1" placeholder="e.g. 3000" />
-          <span class="hint">Chamber temperature</span>
-        </div>
-        <div class="field">
-          <label for="pc">p<sub>c</sub> (Pa)</label>
-          <input id="pc" type="number" step="1" placeholder="e.g. 4000000" />
-          <span class="hint">Chamber pressure</span>
-        </div>
+        <!-- common γ, R, Tc, pc removed from here -->
         <div class="field">
           <label for="pe">p<sub>e</sub> (Pa)</label>
           <input id="pe" type="number" step="1" placeholder="e.g. 101325" />
@@ -184,26 +208,7 @@
       <!-- NOZZLE -->
       <h2 class="section-title">Nozzle</h2>
       <div class="grid">
-        <div class="field">
-          <label for="nozGamma">Gamma (γ)</label>
-          <input id="nozGamma" type="number" step="0.0001" placeholder="e.g. 1.22" />
-          <span class="hint">Often same as engine γ</span>
-        </div>
-        <div class="field">
-          <label for="nozR">R<sub>exhaust</sub> (J/kg·K)</label>
-          <input id="nozR" type="number" step="0.1" placeholder="e.g. 285.6" />
-          <span class="hint">Often same as engine R</span>
-        </div>
-        <div class="field">
-          <label for="nozTc">T<sub>c</sub> (K)</label>
-          <input id="nozTc" type="number" step="0.1" placeholder="e.g. 3000" />
-          <span class="hint">Chamber temperature</span>
-        </div>
-        <div class="field">
-          <label for="nozPc">p<sub>c</sub> (Pa)</label>
-          <input id="nozPc" type="number" step="1" placeholder="e.g. 4000000" />
-          <span class="hint">Chamber pressure</span>
-        </div>
+        <!-- γ, R, Tc, pc removed; taken from common -->
         <div class="field">
           <label for="nozMdot">ṁ (kg/s)</label>
           <input id="nozMdot" type="number" step="0.0001" placeholder="e.g. 5" />
