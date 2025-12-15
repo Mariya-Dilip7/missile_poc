@@ -12,19 +12,20 @@
       <div class="subtitle">
         Engine, injector and nozzle performance using ideal rocket relations.
       </div>
-        <div class="row" style="margin-bottom: 10px;">
-  <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
-    <input type="checkbox" id="rangeModeToggle" />
-    Use range sliders instead of text boxes
-  </label>
-  <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
-    <input type="checkbox" id="enableEditToggle" checked />
-    Enable input editing
-  </label>
-  <button class="btn btn-secondary" id="resetAllBtn" type="button">
-    Reset all
-  </button>
-</div>
+
+      <div class="row" style="margin-bottom: 10px;">
+        <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
+          <input type="checkbox" id="rangeModeToggle" />
+          Show range sliders below inputs
+        </label>
+        <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
+          <input type="checkbox" id="enableEditToggle" checked />
+          Enable input editing
+        </label>
+        <button class="btn btn-secondary" id="resetAllBtn" type="button">
+          Reset all
+        </button>
+      </div>
 
       <!-- COMMON PARAMETERS -->
       <h2 class="section-title">Common parameters</h2>
@@ -59,7 +60,6 @@
       <!-- ENGINE PERFORMANCE -->
       <h2 class="section-title">Engine performance</h2>
       <div class="grid">
-        <!-- common γ, R, Tc, pc removed from here -->
         <div class="field">
           <label for="pe">p<sub>e</sub> (Pa)</label>
           <input id="pe" type="number" step="1" placeholder="e.g. 101325" />
@@ -103,7 +103,7 @@
       </div>
 
       <div class="row">
-        <button class="btn btn-primary" id="engineComputeBtn">Compute engine</button>
+        <button class="btn btn-primary" id="engineComputeBtn" type="button">Compute engine</button>
         <button class="btn btn-secondary" id="engineResetBtn" type="button">Reset engine</button>
         <span class="hint">Computes V<sub>e</sub>, I<sub>sp</sub>, C<sub>F</sub>, F, Δv, T/W.</span>
       </div>
@@ -183,7 +183,7 @@
       </div>
 
       <div class="row">
-        <button class="btn btn-primary" id="injComputeBtn">Compute injector</button>
+        <button class="btn btn-primary" id="injComputeBtn" type="button">Compute injector</button>
         <button class="btn btn-secondary" id="injResetBtn" type="button">Reset injector</button>
         <span class="hint">Computes D<sub>32</sub>, A<sub>inj</sub>, d<sub>hole</sub>.</span>
       </div>
@@ -208,7 +208,6 @@
       <!-- NOZZLE -->
       <h2 class="section-title">Nozzle</h2>
       <div class="grid">
-        <!-- γ, R, Tc, pc removed; taken from common -->
         <div class="field">
           <label for="nozMdot">ṁ (kg/s)</label>
           <input id="nozMdot" type="number" step="0.0001" placeholder="e.g. 5" />
@@ -227,7 +226,7 @@
       </div>
 
       <div class="row">
-        <button class="btn btn-primary" id="nozComputeBtn">Compute nozzle</button>
+        <button class="btn btn-primary" id="nozComputeBtn" type="button">Compute nozzle</button>
         <button class="btn btn-secondary" id="nozResetBtn" type="button">Reset nozzle</button>
         <span class="hint">Computes A<sub>t</sub>, A<sub>e</sub>, D<sub>t</sub>, D<sub>e</sub>, L<sub>div</sub>.</span>
       </div>
