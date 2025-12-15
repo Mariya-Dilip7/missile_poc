@@ -91,6 +91,10 @@ input[type="number"]:focus {
   background: #070a18;
 }
 
+input[type="range"] {
+  width: 100%;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -132,6 +136,8 @@ input[type="number"]:focus {
   background: rgba(155, 164, 209, 0.06);
 }
 
+/* RESULTS SECTION – more distinct color */
+
 .results {
   margin-top: 10px;
   padding-top: 10px;
@@ -141,27 +147,30 @@ input[type="number"]:focus {
   gap: 10px 18px;
 }
 
+/* Stronger background and border so outputs pop */
 .result-card {
   padding: 10px 11px;
-  background: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 180, 140, 0.6);
+  background: radial-gradient(circle at top left, #123a2a 0, #020908 70%);
+}
+
+/* Make numeric result text bright green */
+.result-value {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #7af0c2;
 }
 
 .result-label {
   font-size: 0.74rem;
-  color: #9ca4d1;
+  color: #c0e5d8;
   margin-bottom: 4px;
-}
-
-.result-value {
-  font-size: 1.02rem;
-  font-weight: 600;
 }
 
 .result-unit {
   font-size: 0.74rem;
-  color: #7f88b5;
+  color: #9ad9c2;
   margin-left: 4px;
 }
 
@@ -170,6 +179,13 @@ input[type="number"]:focus {
   font-size: 0.78rem;
   color: #ff9b9b;
   min-height: 16px;
+}
+
+/* small value badge if you use it near inputs */
+.range-value-badge {
+  margin-left: 6px;
+  font-size: 0.72rem;
+  color: #9ca4d1;
 }
 
 @media (max-width: 600px) {
