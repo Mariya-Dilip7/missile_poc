@@ -13,18 +13,28 @@
         Engine, injector and nozzle performance using ideal rocket relations.
       </div>
 
-      <div class="row" style="margin-bottom: 10px;">
-        <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
-          <input type="checkbox" id="rangeModeToggle" />
-          Show range sliders below inputs
-        </label>
-        <label style="display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#aab4ff;">
-          <input type="checkbox" id="enableEditToggle" checked />
-          Enable input editing
-        </label>
-        <button class="btn btn-secondary" id="resetAllBtn" type="button">
-          Reset all
-        </button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 16px 18px; background: rgba(100, 217, 255, 0.06); border-radius: 12px; border: 1px solid rgba(100, 217, 255, 0.15);">
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #b0b8d8; font-weight: 600;">
+            <input type="checkbox" id="rangeModeToggle" style="width: 18px; height: 18px; cursor: pointer;" />
+            Range Sliders
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #b0b8d8; font-weight: 600;">
+            <input type="checkbox" id="enableEditToggle" checked style="width: 18px; height: 18px; cursor: pointer;" />
+            Edit Inputs
+          </label>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-primary" id="calculateAllBtn" type="button" style="margin: 0;">
+            Calculate All
+          </button>
+          <button class="btn btn-secondary" id="loadExampleBtn" type="button" style="margin: 0;">
+            Load Example
+          </button>
+          <button class="btn btn-secondary" id="resetAllBtn" type="button" style="margin: 0;">
+            Reset All
+          </button>
+        </div>
       </div>
 
       <!-- COMMON PARAMETERS -->
@@ -654,6 +664,38 @@
 
       <div class="error" id="tankError"></div>
       </div>
+
+      <!-- VISUALIZATIONS SECTION -->
+      <h2 class="section-title">Performance Visualizations <span class="section-toggle">−</span></h2>
+      <div class="section-content">
+        <div class="viz-container">
+          <div class="viz-card">
+            <h3 class="viz-title">Engine Performance Summary</h3>
+            <canvas id="enginePerformanceChart"></canvas>
+          </div>
+          <div class="viz-card">
+            <h3 class="viz-title">Thrust & Acceleration Profile</h3>
+            <canvas id="thrustAccelChart"></canvas>
+          </div>
+          <div class="viz-card">
+            <h3 class="viz-title">Mass & Velocity Evolution</h3>
+            <canvas id="massVelChart"></canvas>
+          </div>
+          <div class="viz-card">
+            <h3 class="viz-title">Propellant Distribution</h3>
+            <canvas id="propellantChart"></canvas>
+          </div>
+          <div class="viz-card">
+            <h3 class="viz-title">Tank Capacity</h3>
+            <canvas id="tankCapacityChart"></canvas>
+          </div>
+          <div class="viz-card" id="nozzleCard">
+            <h3 class="viz-title">Nozzle Geometry</h3>
+            <svg id="nozzleDiagram" viewBox="0 0 600 300" style="width: 100%; height: 350px; border: 1px solid rgba(100, 217, 255, 0.3); border-radius: 10px; background: rgba(10, 15, 35, 0.5);"></svg>
+          </div>
+        </div>
+      </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="engine.js"></script>
 </body>
 </html>

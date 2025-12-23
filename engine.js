@@ -875,6 +875,121 @@ function setInputsEnabled(enabled) {
   });
 }
 
+// -------- LOAD EXAMPLE VALUES --------
+
+function loadExampleValues() {
+  const examples = {
+    // Common parameters
+    commonGamma: 1.22,
+    commonR: 285.6,
+    commonTc: 3000,
+    commonPc: 4000000,
+
+    // Engine
+    pe: 101325,
+    AeAt: 10,
+    mdot: 5,
+    Ae: 0.0403,
+    At: 0.004,
+    pa: 101325,
+    m0: 200,
+    mf: 100,
+    tb: 20,
+    m_payload: 50,
+
+    // Injector
+    injC: 0.5,
+    injMu: 0.0015,
+    injSigma: 0.02,
+    injDp: 500000,
+    injMdot: 4.3,
+    injRho: 1140,
+    injU: 20,
+    injHoles: 16,
+    injDSpray: 0.1,
+    injLSpray: 0.5,
+    injCd: 0.8,
+    injNHoles: 32,
+    injGamma: 1.4,
+    injROx: 300,
+    injTOx: 300,
+
+    // Nozzle
+    nozMdot: 5,
+    nozAeAt: 10,
+    nozPe: 101325,
+    nozThetaDiv: 15,
+    nozThetaConv: 45,
+
+    // Fuel & Oxidizer
+    fuelM0: 200,
+    fuelOFRatio: 2.0,
+    fuelMdotFuel: 1.5,
+    fuelMdotOx: 3.0,
+    fuelRhoFuel: 880,
+    fuelRhoOx: 1400,
+    fuelARegression: 0.05,
+    fuelC: 0.00334,
+    fuelN: 0.65,
+    fuelTb: 20,
+    fuelPc: 4400000,
+
+    // Fuel Grain
+    grainRo: 0.15,
+    grainRi: 0.05,
+    grainH: 1.0,
+    grainGOX: 100,
+    grainC: 0.0015,
+    grainN: 0.65,
+    grainPc: 4400000,
+
+    // Oxidizer Tank
+    tankR: 0.2,
+    tankH: 1.0,
+    tankCd: 0.8,
+    tankA: 0.001,
+    tankTr: 300,
+    tankPo: 4400000,
+    tankGamma: 1.4,
+    tankR_gas: 300
+  };
+
+  // Set all example values
+  for (const [id, value] of Object.entries(examples)) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = value;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  }
+}
+
+// -------- CALCULATE ALL --------
+
+function calculateAll() {
+  // Calculate all sections in sequence
+  computeEngine();
+  setTimeout(() => {
+    computeInjector();
+  }, 100);
+  
+  setTimeout(() => {
+    computeNozzle();
+  }, 200);
+  
+  setTimeout(() => {
+    computeFuelOxidizer();
+  }, 300);
+  
+  setTimeout(() => {
+    computeFuelGrain();
+  }, 400);
+  
+  setTimeout(() => {
+    computeOxidizerTank();
+  }, 500);
+}
+
 // -------- RESET ALL --------
 
 function resetAll() {
@@ -967,6 +1082,560 @@ window.addEventListener("DOMContentLoaded", () => {
   if (resetAllBtn) {
     resetAllBtn.addEventListener("click", resetAll);
   }
+
+  const loadExampleBtn = document.getElementById("loadExampleBtn");
+  if (loadExampleBtn) {
+    loadExampleBtn.addEventListener("click", loadExampleValues);
+  }
+
+  const calculateAllBtn = document.getElementById("calculateAllBtn");
+  if (calculateAllBtn) {
+    calculateAllBtn.addEventListener("click", () => {
+      calculateAll();
+      setTimeout(() => {
+        updateVisualizations();
+      }, 600);
+    });
+  }
+
+  // -------- VISUALIZATIONS --------
+
+  let charts = {};
+
+  function updateVisualizations() {
+    updateEnginePerformanceChart();
+    updateThrustAccelChart();
+    updateMassVelChart();
+    updatePropellantChart();
+    updateNozzleDiagram();
+    updateTankCapacityChart();
+  }
+
+  function updateEnginePerformanceChart() {
+    const Ve = parseFloat(document.getElementById("VeDisplay")?.textContent || 0);
+    const Isp = parseFloat(document.getElementById("IspDisplay")?.textContent || 0);
+    const CF = parseFloat(document.getElementById("CFDisplay")?.textContent || 0);
+    const F = parseFloat(document.getElementById("FDisplay")?.textContent || 0);
+
+    const ctx = document.getElementById("enginePerformanceChart");
+    if (!ctx) return;
+
+    if (charts.enginePerf) charts.enginePerf.destroy();
+
+    charts.enginePerf = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Ve (m/s)", "Isp (s)", "CF", "F (kN)"],
+        datasets: [{
+          label: "Engine Metrics",
+          data: [Ve, Isp, CF, F / 1000],
+          backgroundColor: [
+            "rgba(100, 217, 255, 0.8)",
+            "rgba(91, 136, 255, 0.8)",
+            "rgba(100, 217, 255, 0.6)",
+            "rgba(91, 136, 255, 0.6)"
+          ],
+          borderColor: "#64d9ff",
+          borderWidth: 2,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: "y",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "rgba(15, 20, 40, 0.9)",
+            titleColor: "#64d9ff",
+            bodyColor: "#e8eef7",
+            borderColor: "#64d9ff",
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y: {
+            ticks: { color: "#b0b8d8" }
+          }
+        }
+      }
+    });
+  }
+
+  function updateThrustAccelChart() {
+    const F = parseFloat(document.getElementById("FDisplay")?.textContent || 0);
+    const accel = parseFloat(document.getElementById("accelDisplay")?.textContent || 0);
+    const nAccel = parseFloat(document.getElementById("nAccelDisplay")?.textContent || 0);
+
+    const ctx = document.getElementById("thrustAccelChart");
+    if (!ctx) return;
+
+    if (charts.thrustAccel) charts.thrustAccel.destroy();
+
+    // Simulate thrust curve over burn time
+    const burnTime = parseFloat(document.getElementById("tb")?.value || 20);
+    const timePoints = [];
+    const thrustPoints = [];
+    const accelPoints = [];
+
+    for (let t = 0; t <= burnTime; t += burnTime / 20) {
+      timePoints.push(t.toFixed(1));
+      thrustPoints.push((F * (1 - 0.3 * Math.sin(Math.PI * t / burnTime))).toFixed(0));
+      accelPoints.push((accel * (1 - 0.2 * Math.sin(Math.PI * t / burnTime))).toFixed(2));
+    }
+
+    charts.thrustAccel = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: timePoints,
+        datasets: [
+          {
+            label: "Thrust (N)",
+            data: thrustPoints,
+            borderColor: "#64d9ff",
+            backgroundColor: "rgba(100, 217, 255, 0.1)",
+            tension: 0.3,
+            yAxisID: "y",
+            borderWidth: 2
+          },
+          {
+            label: "Acceleration (m/s²)",
+            data: accelPoints,
+            borderColor: "#ff9db8",
+            backgroundColor: "rgba(255, 157, 184, 0.1)",
+            tension: 0.3,
+            yAxisID: "y1",
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: "#b0b8d8", boxWidth: 12 },
+            position: "top"
+          },
+          tooltip: {
+            backgroundColor: "rgba(15, 20, 40, 0.9)",
+            titleColor: "#64d9ff",
+            bodyColor: "#e8eef7",
+            borderColor: "#64d9ff",
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            ticks: { color: "#ff9db8" },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+
+  function updateMassVelChart() {
+    const m0 = parseFloat(document.getElementById("m0")?.value || 0);
+    const mf = parseFloat(document.getElementById("mf")?.value || 0);
+    const dv = parseFloat(document.getElementById("dVDisplay")?.textContent || 0);
+
+    const ctx = document.getElementById("massVelChart");
+    if (!ctx) return;
+
+    if (charts.massVel) charts.massVel.destroy();
+
+    const burnTime = parseFloat(document.getElementById("tb")?.value || 20);
+    const timePoints = [];
+    const massPoints = [];
+    const velPoints = [];
+
+    for (let t = 0; t <= burnTime; t += burnTime / 20) {
+      const ratio = t / burnTime;
+      timePoints.push(t.toFixed(1));
+      massPoints.push((m0 - (m0 - mf) * ratio).toFixed(1));
+      velPoints.push((dv * ratio).toFixed(0));
+    }
+
+    charts.massVel = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: timePoints,
+        datasets: [
+          {
+            label: "Mass (kg)",
+            data: massPoints,
+            borderColor: "#a8d8ff",
+            backgroundColor: "rgba(168, 216, 255, 0.1)",
+            tension: 0.3,
+            yAxisID: "y",
+            borderWidth: 2
+          },
+          {
+            label: "Velocity (m/s)",
+            data: velPoints,
+            borderColor: "#ffc857",
+            backgroundColor: "rgba(255, 200, 87, 0.1)",
+            tension: 0.3,
+            yAxisID: "y1",
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: "#b0b8d8", boxWidth: 12 },
+            position: "top"
+          },
+          tooltip: {
+            backgroundColor: "rgba(15, 20, 40, 0.9)",
+            titleColor: "#64d9ff",
+            bodyColor: "#e8eef7",
+            borderColor: "#64d9ff",
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            ticks: { color: "#ffc857" },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  }
+
+  function updatePropellantChart() {
+    const fuelMass = parseFloat(document.getElementById("fuelMassDisplay")?.textContent || 0);
+    const oxMass = parseFloat(document.getElementById("oxMassDisplay")?.textContent || 0);
+    const payloadMass = parseFloat(document.getElementById("m_payload")?.value || 0);
+    const dryMass = parseFloat(document.getElementById("mf")?.value || 0) - fuelMass - oxMass;
+
+    const ctx = document.getElementById("propellantChart");
+    if (!ctx) return;
+
+    if (charts.propellant) charts.propellant.destroy();
+
+    charts.propellant = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Fuel", "Oxidizer", "Payload", "Dry Mass"],
+        datasets: [{
+          data: [fuelMass, oxMass, payloadMass, dryMass],
+          backgroundColor: [
+            "rgba(255, 200, 87, 0.8)",
+            "rgba(100, 217, 255, 0.8)",
+            "rgba(255, 157, 184, 0.8)",
+            "rgba(150, 170, 200, 0.8)"
+          ],
+          borderColor: "#1a1f2e",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            labels: { color: "#b0b8d8", boxWidth: 12, padding: 12 },
+            position: "bottom"
+          },
+          tooltip: {
+            backgroundColor: "rgba(15, 20, 40, 0.9)",
+            titleColor: "#64d9ff",
+            bodyColor: "#e8eef7",
+            borderColor: "#64d9ff",
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                return context.label + ": " + context.parsed + " kg";
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateNozzleDiagram() {
+    const svg = document.getElementById("nozzleDiagram");
+    if (!svg) return;
+
+    const Dt = parseFloat(document.getElementById("DtDisplay")?.textContent || 0.05);
+    const De = parseFloat(document.getElementById("DeDisplay")?.textContent || 0.15);
+    const Ldiv = parseFloat(document.getElementById("LdivDisplay")?.textContent || 0.3);
+    const Lconv = parseFloat(document.getElementById("LconvDisplay")?.textContent || 0.2);
+
+    // Clear previous content
+    svg.innerHTML = "";
+
+    const width = 600, height = 300;
+    const scale = 300;
+    const centerY = height / 2;
+
+    // Throat position with convergent section
+    const chamberX = 40;
+    const throatX = chamberX + Lconv * scale;
+    const exitX = throatX + Ldiv * scale;
+
+    // Draw chamber (larger)
+    const chamberRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    chamberRect.setAttribute("x", chamberX.toString());
+    chamberRect.setAttribute("y", (centerY - Dt * scale / 2).toString());
+    chamberRect.setAttribute("width", (Lconv * scale).toString());
+    chamberRect.setAttribute("height", (Dt * scale).toString());
+    chamberRect.setAttribute("fill", "rgba(100, 217, 255, 0.3)");
+    chamberRect.setAttribute("stroke", "#64d9ff");
+    chamberRect.setAttribute("stroke-width", "2.5");
+    svg.appendChild(chamberRect);
+
+    // Draw throat
+    const throatRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    throatRect.setAttribute("x", throatX.toString());
+    throatRect.setAttribute("y", (centerY - Dt * scale / 2).toString());
+    throatRect.setAttribute("width", "8");
+    throatRect.setAttribute("height", (Dt * scale).toString());
+    throatRect.setAttribute("fill", "rgba(255, 200, 87, 0.8)");
+    throatRect.setAttribute("stroke", "#ffc857");
+    throatRect.setAttribute("stroke-width", "2.5");
+    svg.appendChild(throatRect);
+
+    // Draw divergent nozzle (expansion section)
+    const divergentPath = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    const topY = centerY - De * scale / 2;
+    const botY = centerY + De * scale / 2;
+    const throatTopY = centerY - Dt * scale / 2;
+    const throatBotY = centerY + Dt * scale / 2;
+    
+    divergentPath.setAttribute("points", `${throatX + 8},${throatTopY} ${exitX},${topY} ${exitX},${botY} ${throatX + 8},${throatBotY}`);
+    divergentPath.setAttribute("fill", "rgba(100, 217, 255, 0.2)");
+    divergentPath.setAttribute("stroke", "#64d9ff");
+    divergentPath.setAttribute("stroke-width", "2.5");
+    svg.appendChild(divergentPath);
+
+    // Draw centerline
+    const centerLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    centerLine.setAttribute("x1", "20");
+    centerLine.setAttribute("y1", centerY.toString());
+    centerLine.setAttribute("x2", exitX.toString());
+    centerLine.setAttribute("y2", centerY.toString());
+    centerLine.setAttribute("stroke", "rgba(100, 217, 255, 0.3)");
+    centerLine.setAttribute("stroke-width", "1");
+    centerLine.setAttribute("stroke-dasharray", "4,4");
+    svg.appendChild(centerLine);
+
+    // Add dimension lines and labels
+    // Throat diameter label
+    const throatDimLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    throatDimLine.setAttribute("x1", (throatX - 15).toString());
+    throatDimLine.setAttribute("y1", throatTopY.toString());
+    throatDimLine.setAttribute("x2", (throatX - 15).toString());
+    throatDimLine.setAttribute("y2", throatBotY.toString());
+    throatDimLine.setAttribute("stroke", "#ffc857");
+    throatDimLine.setAttribute("stroke-width", "1.5");
+    svg.appendChild(throatDimLine);
+
+    // Exit diameter label
+    const exitDimLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    exitDimLine.setAttribute("x1", (exitX + 15).toString());
+    exitDimLine.setAttribute("y1", topY.toString());
+    exitDimLine.setAttribute("x2", (exitX + 15).toString());
+    exitDimLine.setAttribute("y2", botY.toString());
+    exitDimLine.setAttribute("stroke", "#64d9ff");
+    exitDimLine.setAttribute("stroke-width", "1.5");
+    svg.appendChild(exitDimLine);
+
+    // Section labels with background
+    function createLabel(x, y, lines, color, bgColor) {
+      // Handle both single string and array of strings
+      const textLines = Array.isArray(lines) ? lines : [lines];
+      const bgHeight = textLines.length > 1 ? 28 : 22;
+      
+      // Background rectangle
+      const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      bg.setAttribute("x", (x - 45).toString());
+      bg.setAttribute("y", (y - bgHeight/2).toString());
+      bg.setAttribute("width", "90");
+      bg.setAttribute("height", bgHeight.toString());
+      bg.setAttribute("fill", bgColor);
+      bg.setAttribute("stroke", color);
+      bg.setAttribute("stroke-width", "1.5");
+      bg.setAttribute("rx", "4");
+      svg.appendChild(bg);
+
+      // Create text group for multi-line support
+      const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      textGroup.setAttribute("x", x.toString());
+      textGroup.setAttribute("y", y.toString());
+      textGroup.setAttribute("fill", color);
+      textGroup.setAttribute("font-size", "12");
+      textGroup.setAttribute("font-weight", "700");
+      textGroup.setAttribute("text-anchor", "middle");
+      textGroup.setAttribute("dominant-baseline", "middle");
+      
+      textLines.forEach((line, index) => {
+        const tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan.setAttribute("x", x.toString());
+        tspan.setAttribute("dy", index === 0 ? "0" : "14");
+        tspan.textContent = line;
+        textGroup.appendChild(tspan);
+      });
+      
+      svg.appendChild(textGroup);
+    }
+
+    // Chamber label
+    createLabel(chamberX + Lconv * scale / 2, 30, "CHAMBER", "#64d9ff", "rgba(100, 217, 255, 0.1)");
+
+    // Throat label
+    createLabel(throatX + 4, centerY + 50, [`THROAT`, `Dt=${Dt.toFixed(3)}m`], "#ffc857", "rgba(255, 200, 87, 0.1)");
+
+    // Nozzle label
+    createLabel(throatX + Ldiv * scale / 2 + 4, centerY - 60, [`DIVERGENT`, `NOZZLE`, `De=${De.toFixed(3)}m`], "#64d9ff", "rgba(100, 217, 255, 0.1)");
+
+    // Expansion ratio label
+    const expansionRatio = (De / Dt).toFixed(2);
+    const ratioLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    ratioLabel.setAttribute("x", "300");
+    ratioLabel.setAttribute("y", "280");
+    ratioLabel.setAttribute("fill", "#a8d8ff");
+    ratioLabel.setAttribute("font-size", "12");
+    ratioLabel.setAttribute("text-anchor", "middle");
+    ratioLabel.setAttribute("font-weight", "600");
+    ratioLabel.textContent = `Expansion Ratio = ${expansionRatio}`;
+    svg.appendChild(ratioLabel);
+
+    // Add flow direction arrow
+    const arrowGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const arrowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    arrowPath.setAttribute("d", `M ${exitX - 30} 20 L ${exitX} 20 L ${exitX - 8} 14 M ${exitX} 20 L ${exitX - 8} 26`);
+    arrowPath.setAttribute("stroke", "#7af0c2");
+    arrowPath.setAttribute("stroke-width", "2");
+    arrowPath.setAttribute("fill", "none");
+    arrowPath.setAttribute("stroke-linecap", "round");
+    arrowPath.setAttribute("stroke-linejoin", "round");
+    arrowGroup.appendChild(arrowPath);
+
+    const flowLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    flowLabel.setAttribute("x", (exitX - 20).toString());
+    flowLabel.setAttribute("y", "12");
+    flowLabel.setAttribute("fill", "#7af0c2");
+    flowLabel.setAttribute("font-size", "11");
+    flowLabel.setAttribute("font-weight", "600");
+    flowLabel.textContent = "FLOW";
+    arrowGroup.appendChild(flowLabel);
+
+    svg.appendChild(arrowGroup);
+  }
+
+  function updateTankCapacityChart() {
+    const V_cyl = parseFloat(document.getElementById("V_cylDisplay")?.textContent || 0);
+    const V_total = parseFloat(document.getElementById("V_totalDisplay")?.textContent || 0);
+    const oxVol = parseFloat(document.getElementById("oxVolDisplay")?.textContent || 0);
+
+    const ctx = document.getElementById("tankCapacityChart");
+    if (!ctx) return;
+
+    if (charts.tankCap) charts.tankCap.destroy();
+
+    charts.tankCap = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Cylinder", "Total", "Oxidizer Used"],
+        datasets: [{
+          label: "Volume (m³)",
+          data: [V_cyl, V_total, oxVol],
+          backgroundColor: [
+            "rgba(100, 217, 255, 0.8)",
+            "rgba(91, 136, 255, 0.8)",
+            "rgba(100, 217, 255, 0.5)"
+          ],
+          borderColor: "#64d9ff",
+          borderWidth: 2,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: "y",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "rgba(15, 20, 40, 0.9)",
+            titleColor: "#64d9ff",
+            bodyColor: "#e8eef7",
+            borderColor: "#64d9ff",
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#b0b8d8" },
+            grid: { color: "rgba(100, 217, 255, 0.1)" }
+          },
+          y: {
+            ticks: { color: "#b0b8d8" }
+          }
+        }
+      }
+    });
+  }
+
+  // Update visualizations when compute buttons are clicked
+  document.getElementById("engineComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
+
+  document.getElementById("injComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
+
+  document.getElementById("nozComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
+
+  document.getElementById("fuelComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
+
+  document.getElementById("grainComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
+
+  document.getElementById("tankComputeBtn")?.addEventListener("click", function() {
+    setTimeout(updateVisualizations, 100);
+  });
 
   // Trigger reset all on page load to initialize the state
   resetAll();
