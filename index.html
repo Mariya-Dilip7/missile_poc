@@ -28,7 +28,8 @@
       </div>
 
       <!-- COMMON PARAMETERS -->
-      <h2 class="section-title">Common parameters</h2>
+      <h2 class="section-title">Common parameters <span class="section-toggle">−</span></h2>
+      <div class="section-content">
       <div class="grid">
         <div class="field">
           <label for="commonGamma">Gamma (γ)</label>
@@ -56,9 +57,11 @@
         <button class="btn btn-secondary" id="commonResetBtn" type="button">Reset common</button>
         <span class="hint">Clears shared γ, R, T<sub>c</sub>, p<sub>c</sub>.</span>
       </div>
+      </div>
 
       <!-- ENGINE PERFORMANCE -->
-      <h2 class="section-title">Engine performance</h2>
+      <h2 class="section-title">Engine performance <span class="section-toggle">−</span></h2>
+      <div class="section-content">
       <div class="grid">
         <div class="field">
           <label for="pe">p<sub>e</sub> (Pa)</label>
@@ -81,6 +84,11 @@
           <span class="hint">Exit area (for thrust)</span>
         </div>
         <div class="field">
+          <label for="At">A<sub>t</sub> (m²)</label>
+          <input id="At" type="number" step="0.000001" placeholder="e.g. 0.004" />
+          <span class="hint">Throat area (for c*)</span>
+        </div>
+        <div class="field">
           <label for="pa">p<sub>a</sub> (Pa)</label>
           <input id="pa" type="number" step="1" placeholder="e.g. 101325" />
           <span class="hint">Ambient pressure</span>
@@ -99,6 +107,11 @@
           <label for="tb">t<sub>b</sub> (s)</label>
           <input id="tb" type="number" step="0.01" placeholder="e.g. 20" />
           <span class="hint">Burn time (info)</span>
+        </div>
+        <div class="field">
+          <label for="m_payload">m<sub>payload</sub> (kg)</label>
+          <input id="m_payload" type="number" step="0.01" placeholder="e.g. 50" />
+          <span class="hint">Payload mass</span>
         </div>
       </div>
 
@@ -133,12 +146,46 @@
           <div class="result-label">T/W at liftoff</div>
           <div><span class="result-value" id="twDisplay">–</span></div>
         </div>
+        <div class="result-card">
+          <div class="result-label">Characteristic velocity c*</div>
+          <div><span class="result-value" id="CstarDisplay">–</span><span class="result-unit">m/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Average mass</div>
+          <div><span class="result-value" id="avgMassDisplay">–</span><span class="result-unit">kg</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Average thrust</div>
+          <div><span class="result-value" id="avgThrustDisplay">–</span><span class="result-unit">N</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Acceleration a</div>
+          <div><span class="result-value" id="accelDisplay">–</span><span class="result-unit">m/s²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Acceleration n (g-count)</div>
+          <div><span class="result-value" id="nAccelDisplay">–</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total impulse I<sub>t</sub></div>
+          <div><span class="result-value" id="totalImpulseDisplay">–</span><span class="result-unit">N·s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Net upward acceleration a<sub>net</sub></div>
+          <div><span class="result-value" id="netAccelDisplay">–</span><span class="result-unit">m/s²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Apogee height H</div>
+          <div><span class="result-value" id="apogeeDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
       </div>
 
       <div class="error" id="engineError"></div>
+      </div>
 
       <!-- INJECTOR -->
-      <h2 class="section-title">Injector</h2>
+      <h2 class="section-title">Injector <span class="section-toggle">−</span></h2>
+      <div class="section-content">
       <div class="grid">
         <div class="field">
           <label for="injC">C (empirical)</label>
@@ -180,12 +227,47 @@
           <input id="injHoles" type="number" step="1" placeholder="e.g. 16" />
           <span class="hint">Number of orifices</span>
         </div>
+        <div class="field">
+          <label for="injDSpray">D<sub>spray</sub> (m)</label>
+          <input id="injDSpray" type="number" step="0.0001" placeholder="e.g. 0.1" />
+          <span class="hint">Spray diameter at downstream</span>
+        </div>
+        <div class="field">
+          <label for="injLSpray">L<sub>spray</sub> (m)</label>
+          <input id="injLSpray" type="number" step="0.001" placeholder="e.g. 0.5" />
+          <span class="hint">Axial length from injector exit</span>
+        </div>
+        <div class="field">
+          <label for="injCd">C<sub>d</sub> (discharge)</label>
+          <input id="injCd" type="number" step="0.01" placeholder="e.g. 0.8" />
+          <span class="hint">Discharge coefficient</span>
+        </div>
+        <div class="field">
+          <label for="injNHoles">N (total holes)</label>
+          <input id="injNHoles" type="number" step="1" placeholder="e.g. 32" />
+          <span class="hint">Total number of injection holes</span>
+        </div>
+        <div class="field">
+          <label for="injGamma">γ (oxidizer)</label>
+          <input id="injGamma" type="number" step="0.01" placeholder="e.g. 1.4" />
+          <span class="hint">Specific heat ratio of oxidizer</span>
+        </div>
+        <div class="field">
+          <label for="injROx">R<sub>ox</sub> (J/kg·K)</label>
+          <input id="injROx" type="number" step="0.1" placeholder="e.g. 300" />
+          <span class="hint">Gas constant of oxidizer</span>
+        </div>
+        <div class="field">
+          <label for="injTOx">T<sub>ox</sub> (K)</label>
+          <input id="injTOx" type="number" step="1" placeholder="e.g. 300" />
+          <span class="hint">Oxidizer temperature</span>
+        </div>
       </div>
 
       <div class="row">
         <button class="btn btn-primary" id="injComputeBtn" type="button">Compute injector</button>
         <button class="btn btn-secondary" id="injResetBtn" type="button">Reset injector</button>
-        <span class="hint">Computes D<sub>32</sub>, A<sub>inj</sub>, d<sub>hole</sub>.</span>
+        <span class="hint">Computes D<sub>32</sub>, A<sub>inj</sub>, spray angle, Mach, and more.</span>
       </div>
 
       <div class="results">
@@ -201,13 +283,63 @@
           <div class="result-label">Orifice diameter d<sub>hole</sub></div>
           <div><span class="result-value" id="DholeDisplay">–</span><span class="result-unit">m</span></div>
         </div>
+        <div class="result-card">
+          <div class="result-label">Spray angle Θ</div>
+          <div><span class="result-value" id="sprayAngleDisplay">–</span><span class="result-unit">deg</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Ideal volumetric flow Q<sub>ideal</sub></div>
+          <div><span class="result-value" id="Q_idealDisplay">–</span><span class="result-unit">m³/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Discharge coefficient C<sub>d</sub> (calc)</div>
+          <div><span class="result-value" id="CdDisplay">–</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Orifice area A<sub>orifice</sub></div>
+          <div><span class="result-value" id="A_orificeDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Orifice diameter D<sub>orifice</sub></div>
+          <div><span class="result-value" id="D_orificeDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Mass flow per orifice</div>
+          <div><span class="result-value" id="mdot_orificeDisplay">–</span><span class="result-unit">kg/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Injection velocity U<sub>inj</sub></div>
+          <div><span class="result-value" id="U_injDisplay">–</span><span class="result-unit">m/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Volumetric flow rate Q</div>
+          <div><span class="result-value" id="QDisplay">–</span><span class="result-unit">m³/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Speed of sound a</div>
+          <div><span class="result-value" id="speedOfSoundDisplay">–</span><span class="result-unit">m/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Mach number M</div>
+          <div><span class="result-value" id="MachDisplay">–</span></div>
+        </div>
       </div>
 
       <div class="error" id="injError"></div>
+      </div>
 
       <!-- NOZZLE -->
-      <h2 class="section-title">Nozzle</h2>
+      <h2 class="section-title">Nozzle <span class="section-toggle">−</span></h2>
+      <div class="section-content">
       <div class="grid">
+        <div class="field">
+          <label for="nozType">Nozzle Type</label>
+          <select id="nozType">
+            <option value="conical">Conical</option>
+            <option value="bell">Bell</option>
+          </select>
+          <span class="hint">Nozzle design type</span>
+        </div>
         <div class="field">
           <label for="nozMdot">ṁ (kg/s)</label>
           <input id="nozMdot" type="number" step="0.0001" placeholder="e.g. 5" />
@@ -219,16 +351,26 @@
           <span class="hint">Expansion ratio</span>
         </div>
         <div class="field">
+          <label for="nozPe">p<sub>e</sub> (Pa)</label>
+          <input id="nozPe" type="number" step="1" placeholder="e.g. 101325" />
+          <span class="hint">Exit pressure (alternative to A<sub>e</sub>/A<sub>t</sub>)</span>
+        </div>
+        <div class="field">
           <label for="nozThetaDiv">θ<sub>div</sub> (deg)</label>
           <input id="nozThetaDiv" type="number" step="0.1" placeholder="e.g. 15" />
           <span class="hint">Divergence half angle</span>
+        </div>
+        <div class="field">
+          <label for="nozThetaConv">θ<sub>conv</sub> (deg)</label>
+          <input id="nozThetaConv" type="number" step="0.1" placeholder="e.g. 45" />
+          <span class="hint">Convergence half angle</span>
         </div>
       </div>
 
       <div class="row">
         <button class="btn btn-primary" id="nozComputeBtn" type="button">Compute nozzle</button>
         <button class="btn btn-secondary" id="nozResetBtn" type="button">Reset nozzle</button>
-        <span class="hint">Computes A<sub>t</sub>, A<sub>e</sub>, D<sub>t</sub>, D<sub>e</sub>, L<sub>div</sub>.</span>
+        <span class="hint">Computes A<sub>t</sub>, A<sub>e</sub>, D<sub>t</sub>, D<sub>e</sub>, L<sub>div</sub>, L<sub>conv</sub>, θ<sub>conv</sub>.</span>
       </div>
 
       <div class="results">
@@ -239,6 +381,10 @@
         <div class="result-card">
           <div class="result-label">Exit area A<sub>e</sub></div>
           <div><span class="result-value" id="AeNozDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Expansion ratio A<sub>e</sub>/A<sub>t</sub></div>
+          <div><span class="result-value" id="AeAtDisplay">–</span></div>
         </div>
         <div class="result-card">
           <div class="result-label">Throat diameter D<sub>t</sub></div>
@@ -252,12 +398,262 @@
           <div class="result-label">Divergent length L<sub>div</sub></div>
           <div><span class="result-value" id="LdivDisplay">–</span><span class="result-unit">m</span></div>
         </div>
+        <div class="result-card">
+          <div class="result-label">Convergent length L<sub>conv</sub></div>
+          <div><span class="result-value" id="LconvDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Convergence half-angle θ<sub>conv</sub></div>
+          <div><span class="result-value" id="theta_convDisplay">–</span><span class="result-unit">deg</span></div>
+        </div>
       </div>
 
       <div class="error" id="nozError"></div>
-    </div>
-  </div>
+      </div>
 
+      <!-- FUEL & OXIDIZER -->
+      <h2 class="section-title">Fuel & Oxidizer <span class="section-toggle">−</span></h2>
+      <div class="section-content">
+      <div class="grid">
+        <div class="field">
+          <label for="fuelM0">m<sub>0</sub> (kg)</label>
+          <input id="fuelM0" type="number" step="0.01" placeholder="e.g. 200" />
+          <span class="hint">Total propellant mass</span>
+        </div>
+        <div class="field">
+          <label for="fuelOFRatio">O/F ratio</label>
+          <input id="fuelOFRatio" type="number" step="0.01" placeholder="e.g. 2.0" />
+          <span class="hint">Oxidizer to fuel mass ratio</span>
+        </div>
+        <div class="field">
+          <label for="fuelMdotFuel">ṁ<sub>fuel</sub> (kg/s)</label>
+          <input id="fuelMdotFuel" type="number" step="0.0001" placeholder="e.g. 1.5" />
+          <span class="hint">Fuel mass flow</span>
+        </div>
+        <div class="field">
+          <label for="fuelMdotOx">ṁ<sub>ox</sub> (kg/s)</label>
+          <input id="fuelMdotOx" type="number" step="0.0001" placeholder="e.g. 3.0" />
+          <span class="hint">Oxidizer mass flow</span>
+        </div>
+        <div class="field">
+          <label for="fuelRhoFuel">ρ<sub>fuel</sub> (kg/m³)</label>
+          <input id="fuelRhoFuel" type="number" step="1" placeholder="e.g. 880" />
+          <span class="hint">Fuel density</span>
+        </div>
+        <div class="field">
+          <label for="fuelRhoOx">ρ<sub>ox</sub> (kg/m³)</label>
+          <input id="fuelRhoOx" type="number" step="1" placeholder="e.g. 1400" />
+          <span class="hint">Oxidizer density</span>
+        </div>
+        <div class="field">
+          <label for="fuelARegression">A<sub>regression</sub> (m²)</label>
+          <input id="fuelARegression" type="number" step="0.0001" placeholder="e.g. 0.05" />
+          <span class="hint">Fuel grain surface area</span>
+        </div>
+        <div class="field">
+          <label for="fuelC">c (empirical)</label>
+          <input id="fuelC" type="number" step="0.0001" placeholder="e.g. 0.00334" />
+          <span class="hint">Burn rate constant</span>
+        </div>
+        <div class="field">
+          <label for="fuelN">n (exponent)</label>
+          <input id="fuelN" type="number" step="0.01" placeholder="e.g. 0.65" />
+          <span class="hint">Burn rate exponent</span>
+        </div>
+        <div class="field">
+          <label for="fuelTb">t<sub>b</sub> (s)</label>
+          <input id="fuelTb" type="number" step="0.01" placeholder="e.g. 20" />
+          <span class="hint">Burn time</span>
+        </div>
+        <div class="field">
+          <label for="fuelPc">p<sub>c</sub> (Pa)</label>
+          <input id="fuelPc" type="number" step="1" placeholder="e.g. 4400000" />
+          <span class="hint">Combustion chamber pressure</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="fuelComputeBtn" type="button">Compute fuel & oxidizer</button>
+        <button class="btn btn-secondary" id="fuelResetBtn" type="button">Reset fuel & oxidizer</button>
+        <span class="hint">Computes masses, volumes, mass flows, and regression rate.</span>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Fuel mass m<sub>f</sub></div>
+          <div><span class="result-value" id="fuelMassDisplay">–</span><span class="result-unit">kg</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Oxidizer mass m<sub>ox</sub></div>
+          <div><span class="result-value" id="oxMassDisplay">–</span><span class="result-unit">kg</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Fuel volume V<sub>f</sub></div>
+          <div><span class="result-value" id="fuelVolDisplay">–</span><span class="result-unit">m³</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Oxidizer volume V<sub>ox</sub></div>
+          <div><span class="result-value" id="oxVolDisplay">–</span><span class="result-unit">m³</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Tank volume V<sub>tank</sub></div>
+          <div><span class="result-value" id="tankVolDisplay">–</span><span class="result-unit">m³</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Fuel mass flow ṁ<sub>f</sub></div>
+          <div><span class="result-value" id="mdotFuelDisplay">–</span><span class="result-unit">kg/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Oxidizer mass flow ṁ<sub>ox</sub></div>
+          <div><span class="result-value" id="mdotOxDisplay">–</span><span class="result-unit">kg/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Regression rate r</div>
+          <div><span class="result-value" id="regressionRateDisplay">–</span><span class="result-unit">mm/s</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Gaseous oxidizer flux G<sub>ox</sub></div>
+          <div><span class="result-value" id="fluxDisplay">–</span><span class="result-unit">kg/m²·s</span></div>
+        </div>
+      </div>
+
+      <div class="error" id="fuelError"></div>
+      </div>
+
+      <!-- FUEL GRAIN -->
+      <h2 class="section-title">Fuel Grain <span class="section-toggle">−</span></h2>
+      <div class="section-content">
+      <div class="grid">
+        <div class="field">
+          <label for="grainRo">R<sub>o</sub> (m)</label>
+          <input id="grainRo" type="number" step="0.001" placeholder="e.g. 0.15" />
+          <span class="hint">Outer radius of fuel grain</span>
+        </div>
+        <div class="field">
+          <label for="grainRi">R<sub>i</sub> (m)</label>
+          <input id="grainRi" type="number" step="0.001" placeholder="e.g. 0.05" />
+          <span class="hint">Inner radius (port)</span>
+        </div>
+        <div class="field">
+          <label for="grainH">H (m)</label>
+          <input id="grainH" type="number" step="0.01" placeholder="e.g. 1.0" />
+          <span class="hint">Grain length</span>
+        </div>
+        <div class="field">
+          <label for="grainGOX">G<sub>ox</sub> (kg/m²·s)</label>
+          <input id="grainGOX" type="number" step="1" placeholder="e.g. 100" />
+          <span class="hint">Gaseous oxidizer flux</span>
+        </div>
+        <div class="field">
+          <label for="grainC">a (regression constant)</label>
+          <input id="grainC" type="number" step="0.0001" placeholder="e.g. 0.0015" />
+          <span class="hint">Burn rate constant</span>
+        </div>
+        <div class="field">
+          <label for="grainN">n (regression exponent)</label>
+          <input id="grainN" type="number" step="0.01" placeholder="e.g. 0.65" />
+          <span class="hint">Burn rate exponent</span>
+        </div>
+        <div class="field">
+          <label for="grainPc">p<sub>c</sub> (Pa)</label>
+          <input id="grainPc" type="number" step="1" placeholder="e.g. 4400000" />
+          <span class="hint">Combustion chamber pressure</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="grainComputeBtn" type="button">Compute fuel grain</button>
+        <button class="btn btn-secondary" id="grainResetBtn" type="button">Reset fuel grain</button>
+        <span class="hint">Computes port area, thickness, and regression rate.</span>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Port area A<sub>port</sub></div>
+          <div><span class="result-value" id="portAreaDisplay">–</span><span class="result-unit">m²</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Grain thickness t</div>
+          <div><span class="result-value" id="thicknessDisplay">–</span><span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Regression rate r</div>
+          <div><span class="result-value" id="regressionRateGrainDisplay">–</span><span class="result-unit">mm/s</span></div>
+        </div>
+      </div>
+
+      <div class="error" id="grainError"></div>
+      </div>
+
+      <!-- OXIDIZER TANK -->
+      <h2 class="section-title">Oxidizer Tank <span class="section-toggle">−</span></h2>
+      <div class="section-content">
+      <div class="grid">
+        <div class="field">
+          <label for="tankR">r (m)</label>
+          <input id="tankR" type="number" step="0.001" placeholder="e.g. 0.2" />
+          <span class="hint">Tank radius</span>
+        </div>
+        <div class="field">
+          <label for="tankH">h (m)</label>
+          <input id="tankH" type="number" step="0.01" placeholder="e.g. 1.0" />
+          <span class="hint">Tank height</span>
+        </div>
+        <div class="field">
+          <label for="tankCd">C<sub>d</sub></label>
+          <input id="tankCd" type="number" step="0.01" placeholder="e.g. 0.8" />
+          <span class="hint">Discharge coefficient</span>
+        </div>
+        <div class="field">
+          <label for="tankA">A<sub>vent</sub> (m²)</label>
+          <input id="tankA" type="number" step="0.0001" placeholder="e.g. 0.001" />
+          <span class="hint">Vent/relief area</span>
+        </div>
+        <div class="field">
+          <label for="tankTr">T<sub>r</sub> (K)</label>
+          <input id="tankTr" type="number" step="1" placeholder="e.g. 300" />
+          <span class="hint">Relieving temperature</span>
+        </div>
+        <div class="field">
+          <label for="tankPo">P<sub>o</sub> (Pa)</label>
+          <input id="tankPo" type="number" step="1" placeholder="e.g. 4400000" />
+          <span class="hint">Upstream pressure</span>
+        </div>
+        <div class="field">
+          <label for="tankGamma">γ</label>
+          <input id="tankGamma" type="number" step="0.01" placeholder="e.g. 1.4" />
+          <span class="hint">Specific heat ratio</span>
+        </div>
+        <div class="field">
+          <label for="tankR_gas">R (J/kg·K)</label>
+          <input id="tankR_gas" type="number" step="0.1" placeholder="e.g. 300" />
+          <span class="hint">Gas constant</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn btn-primary" id="tankComputeBtn" type="button">Compute oxidizer tank</button>
+        <button class="btn btn-secondary" id="tankResetBtn" type="button">Reset oxidizer tank</button>
+        <span class="hint">Computes volume and choked relief mass flow.</span>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Cylinder volume V<sub>cyl</sub></div>
+          <div><span class="result-value" id="V_cylDisplay">–</span><span class="result-unit">m³</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Total volume V<sub>total</sub></div>
+          <div><span class="result-value" id="V_totalDisplay">–</span><span class="result-unit">m³</span></div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Relief mass flow ṁ<sub>relief</sub></div>
+          <div><span class="result-value" id="mdot_reliefDisplay">–</span><span class="result-unit">kg/s</span></div>
+        </div>
+      </div>
+
+      <div class="error" id="tankError"></div>
+      </div>
   <script src="engine.js"></script>
 </body>
 </html>
